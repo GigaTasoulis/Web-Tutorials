@@ -52,3 +52,8 @@ with requests.get(url) as response:  # το αντικείμενο response
     - Το όνομα κάθε cookie και για πόσο διάστημα θα είναι έγκυρο.
 
 Για να δείτε ποιες είναι οι κεφαλίδες που δίνουν τις πληροφορίες που σας χρειάζονται στην τεκμηρίωση στο [MDN Web Docs](https://developer.mozilla.org/en-US/).
+
+### Άσκηση 2 (lab2.html):
+
+![image](https://user-images.githubusercontent.com/119429929/222926271-cadc30a7-1c62-4968-b614-33f3221cb181.png)
+
