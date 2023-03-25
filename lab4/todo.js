@@ -9,46 +9,51 @@ const addToList = (item) => {
     let todoList = document.querySelector("#todo-list");
     let li = document.createElement("li");
     li.innerText = item  // create the list
-
-    const myDiv = document.createElement('div');
-    myDiv.classList.add('delete-box');
-
-    let deleteButton = document.createElement("button")
-    deleteButton.innerHTML = "Αφαίρεση"
-    deleteButton.classList.add("delete-button")
-
-    deleteButton.addEventListener("click", () => {
-        li.remove();
-        if(li.classList.contains("completed")){
-            allCount--;
-            notremovedCount--;
-        }
-        else{
-            allCount--;
-        }
-        
-    })
-
-    myDiv.appendChild(deleteButton);
-    li.appendChild(myDiv);
-
+    const currentTime = Date.now();
+    
+    const date = new Date(currentTime)
+    const dateStr = date.toLocaleDateString('el-GR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const timeAgoString = getTimeAgoString(date);
+    
+    li.innerHTML = `<span class="date column-1">${dateStr}<br>${timeAgoString}</span>
+    <span class="item column-2">${item}</span>`;
 
     li.addEventListener("click", () => {
         li.classList.toggle("completed");
         if (li.classList.contains("completed")){
             notremovedCount--;
+            updateScore();
         }
         else{
             notremovedCount++;
+            updateScore();
+            
         }
-        updateScore();
+        
     }) // click to toggle linethrough
+    
 
+    li.addEventListener("dblclick", () => {
+        
+        li.remove();
+        if(li.classList.contains("completed")){
+            allCount--;
+            updateScore();
+        }
+        else{
+            allCount--;
+            notremovedCount--;
+            updateScore();
+        }
+        
+    })
+    
+    
     todoList.appendChild(li);
     allCount++;
     notremovedCount++;
     updateScore();
-}
+};
 
 
 const updateScore = () => {
@@ -56,6 +61,9 @@ const updateScore = () => {
     const notremovedCountElem = document.querySelector("#not-removed-count");
     allCountElem.textContent = allCount;
     notremovedCountElem.textContent = notremovedCount;
+
+    
+
 }
 
 const newItem = document.querySelector("#new-item")
@@ -67,3 +75,18 @@ newItem.addEventListener("keydown", (event) => {
         }
     }
 }) // add new items in the list after you hit enter
+
+
+const getTimeAgoString = (date) => {
+  const today = new Date();
+  const diffTime = Math.abs(today - new Date(date));
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return 'Σήμερα';
+  } else if (diffDays === 1) {
+    return 'Χθες';
+  } else {
+    return `${diffDays} ημέρες πριν`;
+  }
+};
