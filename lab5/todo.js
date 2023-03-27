@@ -4,56 +4,72 @@ const btnClear = document.querySelector('#clear-button');
 let allCount = 0;
 let notremovedCount = allCount;
 
+const prePopulatedTasks = [
+    'Να λύσω ξανά την άσκηση αυτή την επόμενη εβδομάδα που θα ξέρω πώς χειριζόμαστε τα συμβάντα',
+    'Να πάρω τα χάπια μου',
+    'Να διαβάσω JS',
+    'Να ταϊσω τη γάτα',
+    'Να μαγειρέψω'
+]
+    
+
+    
+  
+  
+  // Add the pre-populated tasks to the list when the page is loaded
+  window.addEventListener('load', () => {
+    const todoList = document.querySelector('#todo-list');
+    prePopulatedTasks.forEach(task => addToList(task));
+  });
+
 
 const addToList = (item) => {
     let todoList = document.querySelector("#todo-list");
     let li = document.createElement("li");
-    li.innerText = item  // create the list
-    const currentTime = Date.now();
-    
-    const date = new Date(currentTime)
+    li.innerText = item;
+    const currentTime = Date.now();    
+    const date = new Date(currentTime);
     const dateStr = date.toLocaleDateString('el-GR', { day: 'numeric', month: 'long', year: 'numeric' });
-    const timeAgoString = getTimeAgoString(date);
+    const timeString = getTime(date);
     
-    li.innerHTML = `<span class="date column-1">${dateStr}<br>${timeAgoString}</span>
+    li.innerHTML = `<span class="date column-1">${dateStr}<br>${timeString}</span>
     <span class="item column-2">${item}</span>`;
 
     li.addEventListener("click", () => {
         li.classList.toggle("completed");
-        if (li.classList.contains("completed")){
+        if (li.classList.contains("completed")) {
             notremovedCount--;
             updateScore();
-        }
-        else{
+        } else {
             notremovedCount++;
-            updateScore();
-            
-        }
-        
-    }) // click to toggle linethrough
+            updateScore();            
+        }        
+    });
     
 
     li.addEventListener("dblclick", () => {
         
         li.remove();
-        if(li.classList.contains("completed")){
+        if (li.classList.contains("completed")) {
             allCount--;
             updateScore();
-        }
-        else{
+        } else {
             allCount--;
             notremovedCount--;
             updateScore();
         }
-        
-    })
+        colorEveryOddTask();
     
+    });    
     
     todoList.appendChild(li);
     allCount++;
     notremovedCount++;
     updateScore();
+    colorEveryOddTask();
 };
+
+
 
 
 const updateScore = () => {
@@ -61,32 +77,41 @@ const updateScore = () => {
     const notremovedCountElem = document.querySelector("#not-removed-count");
     allCountElem.textContent = allCount;
     notremovedCountElem.textContent = notremovedCount;
-
-    
-
 }
 
 const newItem = document.querySelector("#new-item")
 newItem.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
+    if (event.keyCode === 13) {
         if (newItem.value !== "") {
             addToList(newItem.value)
             newItem.value = ""
         }
     }
-}) // add new items in the list after you hit enter
+}) 
 
 
-const getTimeAgoString = (date) => {
-  const today = new Date();
-  const diffTime = Math.abs(today - new Date(date));
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) {
-    return 'Σήμερα';
-  } else if (diffDays === 1) {
-    return 'Χθες';
-  } else {
-    return `${diffDays} ημέρες πριν`;
+const getTime = (date) => {
+    const today = new Date();
+    const taskDate = new Date(date);
+    const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
+    
+    if (taskDate.toDateString() === today.toDateString()) {
+      return 'Σήμερα';
+    } else if (taskDate.toDateString() === yesterday.toDateString()) {
+      return 'Χθες';
+    } else {
+      return `${taskDate.toLocaleDateString('el-GR')} ${taskDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+  };
+
+function colorEveryOddTask() {
+    const taskList = document.querySelector("#todo-list");
+    const tasks = taskList.querySelectorAll(".column-2");
+    tasks.forEach((task, index) => {
+      if (index % 2 === 1) {
+        task.style.backgroundColor = "";
+      } else {
+        task.style.backgroundColor = "lightgrey";
+      }
+    });
   }
-};
